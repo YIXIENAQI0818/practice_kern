@@ -41,40 +41,101 @@ static inline unsigned int college_hashfn(int college) { return college & (COLLE
 static void init_buckets(void)
 {
     /* TODO: initialize all hash buckets */
+    for(int i = 0; i < GRADE_BUCKETS; i++)
+        INIT_HLIST_HEAD(&grade_table[i]);
+    for(int i = 0; i < COLLEGE_BUCKETS; i++)
+        INIT_HLIST_HEAD(&college_table[i]);
+    
 }
 
 static struct student *create_student(int id, const char *name)
 {
-    struct student *stu;
+    struct student *stu = kmalloc(sizeof(struct student), GFP_KERNEL);
     /* TODO: allocate and initialize a student struct */
+    if(!stu)
+        return NULL;
+    stu->id = id;
+    strcpy(stu->name, name);
+    
+    INIT_LIST_HEAD(&stu->list);
+    INIT_HLIST_NODE(&stu->hnode_grade);
+    INIT_HLIST_NODE(&stu->hnode_college);
+
     return stu;
 }
 
 static void add_student(struct student *stu)
 {
     /* TODO: add student to list and both hash tables */
+    unsigned int grade = grade_hashfn(get_grade(stu->id));
+    unsigned int college = college_hashfn(get_college(stu->id));
+    hlist_add_head(&stu->hnode_grade, &grade_table[grade]);
+    hlist_add_head(&stu->hnode_college, &college_table[college]);
+    list_add_tail(&stu->list, &student_list);
+
 }
 
 static void del_student(struct student *stu)
 {
     /* TODO: remove student from list and hash tables, free memory */
+    list_del(&stu->list);
+    hlist_del(&stu->hnode_grade);
+    hlist_del(&stu->hnode_college);
+    kfree(stu);
 }
 
 static struct student *find_by_id(int id)
 {
     /* TODO: search student by id in list */
+    struct student *stu;
+    list_for_each_entry(stu, &student_list, list) 
+    {
+        if(stu->id == id)
+            return stu; 
+    }
+
     return NULL;
 }
 
 int assemb_strcmp(const char *dst, const char *src) {
     int res;
     /* TODO: implement strcmp in assembly */
+        asm volatile(
+        "1:\n\t"
+        "movzbl (%[p1]), %%eax\n\t" 
+        "movzbl (%[p2]), %%edx\n\t" 
+        "cmp    %%dl, %%al\n\t" 
+        "jne    2f\n\t" 
+        "test   %%al, %%al\n\t" 
+        "je     3f\n\t" 
+        "inc    %[p1]\n\t" 
+        "inc    %[p2]\n\t"
+        "jmp    1b\n\t" 
+
+        "2:\n\t" 
+        "sub    %%edx, %%eax\n\t" 
+        "jmp    4f\n\t"
+
+        "3:\n\t"
+        "xor    %%eax, %%eax\n\t"
+
+        "4:\n\t"
+        : "=&a"(res), [p1] "+r"(dst), [p2] "+r"(src)
+        : 
+        : "rdx", "cc", "memory"
+    );
     return res;
 }
 
 static struct student *find_by_name(const char *name)
 {
     /* TODO: search student by name using assemb_strcmp */
+    struct student* stu;
+    list_for_each_entry(stu, &student_list, list)
+    {
+        if(assemb_strcmp(stu->name, name) == 0)
+            return stu;
+    }
     return NULL;
 }
 

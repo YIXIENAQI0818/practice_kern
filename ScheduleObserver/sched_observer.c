@@ -37,6 +37,7 @@ static int __init sched_observer_init(void) {
 
     printk(KERN_INFO "Initializing scheduler observer module...\n");
 
+
     // 初始化THREAD_NUM个线程
     for (i = 0; i < THREAD_NUM; i++) {
         atomic_set(&threads[i].schedule_count, 0);
@@ -50,6 +51,15 @@ static int __init sched_observer_init(void) {
         }
 
         // TODO: set thread priority
+        int err = set_cpus_allowed_ptr(threads[i].task, cpumask_of(0));
+        if (err)
+            printk(KERN_WARNING "set_cpus_allowed_ptr(%d) failed: %d\n", i, err);
+
+        if (i == 0) {
+            set_user_nice(threads[i].task, -20);
+        } else {
+            set_user_nice(threads[i].task, 19);
+        }
     }
 
     return 0;

@@ -41,11 +41,13 @@ static int sys_mycall(void)
 static int __init init_addsyscall(void)
 {
     // TODO: get sys_call_table 
+    sys_call_table = (unsigned long *)kallsyms_lookup_name("sys_call_table");
     
     anything_saved = (int (*)(void))(sys_call_table[__NR_syscall]);
     
     orig_cr0 = clear_and_return_cr0();
     // TODO: modify sys_call_table item
+    sys_call_table[__NR_syscall] = (unsigned long)sys_mycall;
 
     setback_cr0(orig_cr0);
     

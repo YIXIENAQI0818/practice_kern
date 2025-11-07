@@ -50,6 +50,14 @@ static int __init traverse_all_vma_init(void)
                 continue;
 
             // TODO: flip vma's WRITE flag
+            if (old_flags & VM_WRITE)
+            {
+                vm_flags_clear(vma, VM_WRITE);
+            }
+            else
+            {
+                vm_flags_set(vma, VM_WRITE);
+            }
 
             new_flags = vma->vm_flags; /* 实际修改后的值 */
 

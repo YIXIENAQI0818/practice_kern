@@ -22,7 +22,13 @@ static unsigned long *get_syscall_table_addr(void)
     // TODO: call kallsyms_lookup_name("sys_call_table")
     // TODO: check if the result is zero
     // TODO: cast the result to (unsigned long *) and return it
-    return NULL; // temporary placeholder
+    unsigned long *syscall_table = NULL;
+    syscall_table = (unsigned long *)kallsyms_lookup_name("sys_call_table");
+
+    if(!syscall_table)
+        return NULL;
+
+    return syscall_table;
 }
 
 /* Module init function */
@@ -37,6 +43,10 @@ static int __init syscall_show_init(void)
     // TODO: call get_syscall_table_addr() and assign to syscall_table
     // TODO: if syscall_table is NULL, return -ENOENT
 
+    syscall_table = get_syscall_table_addr();
+    if(!syscall_table)
+        return -ENOENT;
+
     pr_info("syscall_show: sys_call_table at %p\n", syscall_table);
 
     for (i = 0; i < NR_syscalls; i++) {
@@ -47,6 +57,7 @@ static int __init syscall_show_init(void)
         }
 
         // TODO: use sprint_symbol(symbuf, addr) to resolve symbol name
+        sprint_symbol(symbuf, addr);
         pr_info("syscall[%3d] = %p -> %s\n", i, (void *)addr, symbuf);
     }
 

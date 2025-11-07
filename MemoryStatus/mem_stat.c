@@ -25,6 +25,8 @@ static int pid = -1;
 module_param(pid, int, 0644);
 MODULE_PARM_DESC(pid, "Target process PID");
 
+extern pte_t *__pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp);
+
 static void traverse_all_pages(void)
 {
     unsigned long total_pages = 0;
@@ -70,7 +72,7 @@ static void traverse_all_pages(void)
             else if (PageLRU(page)) 
                 lru_pages++;
 
-            if (PageUptodate(page))
+            if (PageSwapBacked(page))
                 file_pages++; 
         }
     }
@@ -130,12 +132,17 @@ static void traverse_page_table(struct mm_struct *mm)
         // 从 PMD 获取 PTE
         pmd_t *pmdval;
         pte_t *pte = __pte_offset_map(pmd, addr, pmdval);
+        //pte_t *pte = pte_offset_kernel(pmd, addr);
 
         // 如果 PTE 存在且页面有效，增加计数并输出信息
         if (pte && pte_present(*pte)) {
             mapped_pages++;
             pr_info("[memory_status] VA 0x%lx -> PFN 0x%lx (PA 0x%lx)\n",
                      (unsigned long)addr, (unsigned long)pte_pfn(*pte), (unsigned long)(pte_pfn(*pte) << PAGE_SHIFT));
+        }
+        else
+        {
+            pr_info("[memory_status] VA 0x%lx -> PFN 0x0 (PA 0x0)\n", addr);
         }
     }
 

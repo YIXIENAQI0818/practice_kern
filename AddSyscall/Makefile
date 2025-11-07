@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -O2
 
 # 内核构建路径（根据实际情况修改）
-LINUX_KERNEL_PATH := /home/user/Kernel/v5.6/x86_64/
+LINUX_KERNEL_PATH := /home/user/Kernel/v6.6/x86_64/
 
 # 当前工作目录
 CURRENT_PATH := $(shell pwd)

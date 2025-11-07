@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/AddSyscall/add_syscall.mod := printf '%s\n'   add_syscall.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/AddSyscall/"$$0) }' > /home/user/Kernel/share/practice_kern/AddSyscall/add_syscall.mod

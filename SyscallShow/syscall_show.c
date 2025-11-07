@@ -9,6 +9,10 @@ MODULE_AUTHOR("student");
 MODULE_DESCRIPTION("Show syscall table entries with symbol names");
 MODULE_VERSION("0.1");
 
+extern int kallsyms_lookup_names(const char *name,
+				 unsigned int *start,
+				 unsigned int *end);
+
 #ifndef NR_syscalls
 #define NR_syscalls 1024
 #endif

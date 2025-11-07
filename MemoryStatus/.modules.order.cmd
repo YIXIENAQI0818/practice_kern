@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/MemoryStatus/modules.order := {   echo /home/user/Kernel/share/practice_kern/MemoryStatus/mem_stat.o; :; } > /home/user/Kernel/share/practice_kern/MemoryStatus/modules.order

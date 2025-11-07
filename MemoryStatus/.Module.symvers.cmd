@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/MemoryStatus/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/MemoryStatus/Module.symvers -T /home/user/Kernel/share/practice_kern/MemoryStatus/modules.order -i Module.symvers -e 

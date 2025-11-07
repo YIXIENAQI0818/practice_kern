@@ -101,6 +101,10 @@ static void show_vmas(struct mm_struct *mm)
     for (vma = vma_next(&vmi); vma != NULL; vma = vma_next(&vmi))
     {
         const char* filename = "null";
+        if (vma->vm_file) 
+        {
+            filename = vma->vm_file->f_path.dentry->d_name.name;
+        }
         pr_info("VMA: 0x%lx - 0x%lx, flags=0x%lx, anon=%d, file=%s\n",
                 vma->vm_start, vma->vm_end, vma->vm_flags,
                 vma_is_anonymous(vma),filename);
@@ -120,19 +124,26 @@ static void traverse_page_table(struct mm_struct *mm)
          * Reminder: use pte_offset_map() to access PTEs safely
          */
         pgd_t *pgd = pgd_offset(mm, addr);
+        if (pgd_none(*pgd) || pgd_bad(*pgd))
+            continue;
         
         p4d_t *p4d = p4d_offset(pgd, addr);
+        if( p4d_none(*p4d) || p4d_bad(*p4d))
+            continue;
 
         // 获取 PUD 的偏移，获得 pud_t *
         pud_t *pud = pud_offset(p4d, addr);
+        if (pud_none(*pud) || pud_bad(*pud))
+            continue;
         
         // 获取 PMD 的偏移，获得 pmd_t *
         pmd_t *pmd = pmd_offset(pud, addr);
+        if(pmd_none(*pmd) || pmd_bad(*pmd))
+            continue;
         
         // 从 PMD 获取 PTE
         pmd_t *pmdval;
         pte_t *pte = __pte_offset_map(pmd, addr, pmdval);
-        //pte_t *pte = pte_offset_kernel(pmd, addr);
 
         // 如果 PTE 存在且页面有效，增加计数并输出信息
         if (pte && pte_present(*pte)) {
@@ -140,10 +151,7 @@ static void traverse_page_table(struct mm_struct *mm)
             pr_info("[memory_status] VA 0x%lx -> PFN 0x%lx (PA 0x%lx)\n",
                      (unsigned long)addr, (unsigned long)pte_pfn(*pte), (unsigned long)(pte_pfn(*pte) << PAGE_SHIFT));
         }
-        else
-        {
-            pr_info("[memory_status] VA 0x%lx -> PFN 0x0 (PA 0x0)\n", addr);
-        }
+
     }
 
     pr_info("[memory_status] Mapped pages: %lu\n", mapped_pages);

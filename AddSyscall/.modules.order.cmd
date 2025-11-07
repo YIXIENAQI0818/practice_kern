@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/AddSyscall/modules.order := {   echo /home/user/Kernel/share/practice_kern/AddSyscall/add_syscall.o; :; } > /home/user/Kernel/share/practice_kern/AddSyscall/modules.order

@@ -16,6 +16,10 @@ static int sys_mycall(void); // 保持原函数名
 int orig_cr0;               // 保持原变量名
 static int (*anything_saved)(void); // 保持原指针类型
 
+extern int kallsyms_lookup_names(const char *name,
+				 unsigned int *start,
+				 unsigned int *end);
+
 /* 完全保留原CR0操作方式 */
 unsigned int clear_and_return_cr0(void)
 {

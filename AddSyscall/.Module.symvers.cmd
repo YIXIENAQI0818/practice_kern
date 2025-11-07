@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/AddSyscall/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/AddSyscall/Module.symvers -T /home/user/Kernel/share/practice_kern/AddSyscall/modules.order -i Module.symvers -e 

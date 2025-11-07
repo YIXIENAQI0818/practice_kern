@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/MemoryStatus/mem_stat.mod := printf '%s\n'   mem_stat.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/MemoryStatus/"$$0) }' > /home/user/Kernel/share/practice_kern/MemoryStatus/mem_stat.mod

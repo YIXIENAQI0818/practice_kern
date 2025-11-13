@@ -53,6 +53,14 @@ static int __init stat_plus_init(void)
      * under the correct synchronization. Hold a safe reference to the file
      * while printing its information, and release it afterwards.
      */
+    files = task->files;
+	spin_lock(&files->file_lock);
+    file = files_fdtable(files)->fd[fd];
+    if(file)
+    {
+        get_file(file);
+    }
+	spin_unlock(&files->file_lock);
 
     /* TODO (optional): Use an RCU-friendly approach for walking the fd table
      * and briefly justify the synchronization choice.
@@ -87,6 +95,41 @@ static int __init stat_plus_init(void)
         dev_t sdev = 0;
 
     /* TODO: Fill all fields from file/inode under proper sync; get path via d_path (handle IS_ERR). */
+        inode = file_inode(file);
+        path = d_path(&file->f_path, path_buf, PATH_MAX);
+        if (IS_ERR(path))
+            path = "(unknown)";
+        mode = inode->i_mode;
+                if (S_ISREG(mode))
+            type = "regular file";
+        else if (S_ISDIR(mode))
+            type = "directory";
+        else if (S_ISCHR(mode))
+            type = "char device";
+        else if (S_ISBLK(mode))
+            type = "block device";
+        else if (S_ISFIFO(mode))
+            type = "fifo";
+        else if (S_ISSOCK(mode))
+            type = "socket";
+        else
+            type = "unknown";
+
+        kuid = inode->i_uid;
+        kgid = inode->i_gid;
+
+        uid = from_kuid(current_user_ns(), kuid);
+        gid = from_kgid(current_user_ns(), kgid);
+
+        size = inode->i_size;
+        pos = file->f_pos;
+
+        at = inode->i_atime;
+        mt = inode->i_mtime;
+        ct = inode_get_ctime(inode);
+
+        sdev = inode->i_sb->s_dev;
+
 
         pr_info("StatPlus: PID=%d FD=%d\n", pid, fd);
         pr_info("  path: %s\n", path);

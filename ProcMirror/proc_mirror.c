@@ -31,11 +31,61 @@ static struct proc_dir_entry *proc_dir;
 static int create_proc_entries_for_pid(struct task_struct *task)
 {
 	/* TODO 1: Create /proc/proc_mirror directory. */
+	proc_dir = proc_mkdir(PROC_DIR_NAME, NULL);
+	if (!proc_dir)
+		return -ENOMEM;
+
 	/* TODO 2: Walk task->files fdtable (fd >= 3) with proper synchronization. */
+	struct files_struct *files = task->files;
+	int created = 0;
+
+	spin_lock(&files->file_lock);
+	int max_fds = files_fdtable(files)->max_fds;
+	spin_unlock(&files->file_lock);
+
 	/* TODO 3: For each valid struct file, resolve absolute path via d_path. */
-	/* TODO 4: Create symlink "fd-<N>" -> <resolved path> using proc_symlink. */
+	for (int i = 3; i < max_fds; i++)
+	{
+		char path_buf[PATH_MAX];
+		char* path;
+		char name[20];
+		struct proc_dir_entry *ent;
+
+		spin_lock(&files->file_lock);
+		struct file* file = files_fdtable(files)->fd[i];
+		if(!file)
+		{
+			spin_unlock(&files->file_lock);
+			continue;
+		}
+		get_file(file);
+		spin_unlock(&files->file_lock);
+
+		path = d_path(&file->f_path, path_buf, PATH_MAX);
+		
+		snprintf(name, sizeof(name), "fd-%d", i);
+
+		/* TODO 4: Create symlink "fd-<N>" -> <resolved path> using proc_symlink. */
+		ent = proc_symlink(name, proc_dir, path);
+		if(ent)
+			created++;
+
+		fput(file);
+
+		spin_lock(&files->file_lock);
+		max_fds = files_fdtable(files)->max_fds;
+		spin_unlock(&files->file_lock);
+	}
+	
 	/* TODO 5: If at least one symlink was created, return 0; else return -ENOENT. */
-    return -ENOSYS;
+	if(!created)
+	{
+		remove_proc_subtree(PROC_DIR_NAME, NULL);
+		proc_dir = NULL;
+		return  -ENOENT;
+	}
+
+    return 0;
 }
 
 static void destroy_proc_entries(void)

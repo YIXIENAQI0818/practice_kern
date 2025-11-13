@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/StatPlus/stat_plus.mod := printf '%s\n'   stat_plus.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/StatPlus/"$$0) }' > /home/user/Kernel/share/practice_kern/StatPlus/stat_plus.mod

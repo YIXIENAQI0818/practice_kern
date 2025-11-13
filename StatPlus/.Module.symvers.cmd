@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/StatPlus/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/StatPlus/Module.symvers -T /home/user/Kernel/share/practice_kern/StatPlus/modules.order -i Module.symvers -e 

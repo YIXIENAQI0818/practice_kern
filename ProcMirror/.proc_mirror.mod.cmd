@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/ProcMirror/proc_mirror.mod := printf '%s\n'   proc_mirror.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/ProcMirror/"$$0) }' > /home/user/Kernel/share/practice_kern/ProcMirror/proc_mirror.mod

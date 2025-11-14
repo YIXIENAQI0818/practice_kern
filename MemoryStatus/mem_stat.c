@@ -72,7 +72,7 @@ static void traverse_all_pages(void)
             else if (PageLRU(page)) 
                 lru_pages++;
 
-            if (PageSwapBacked(page))
+            if (page->mapping && !PageAnon(page))
                 file_pages++; 
         }
     }
@@ -131,21 +131,17 @@ static void traverse_page_table(struct mm_struct *mm)
         if( p4d_none(*p4d) || p4d_bad(*p4d))
             continue;
 
-        // 获取 PUD 的偏移，获得 pud_t *
         pud_t *pud = pud_offset(p4d, addr);
         if (pud_none(*pud) || pud_bad(*pud))
             continue;
         
-        // 获取 PMD 的偏移，获得 pmd_t *
         pmd_t *pmd = pmd_offset(pud, addr);
         if(pmd_none(*pmd) || pmd_bad(*pmd))
             continue;
         
-        // 从 PMD 获取 PTE
         pmd_t *pmdval;
         pte_t *pte = __pte_offset_map(pmd, addr, pmdval);
 
-        // 如果 PTE 存在且页面有效，增加计数并输出信息
         if (pte && pte_present(*pte)) {
             mapped_pages++;
             pr_info("[memory_status] VA 0x%lx -> PFN 0x%lx (PA 0x%lx)\n",

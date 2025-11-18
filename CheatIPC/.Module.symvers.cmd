@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/CheatIPC/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/CheatIPC/Module.symvers -T /home/user/Kernel/share/practice_kern/CheatIPC/modules.order -i Module.symvers -e 

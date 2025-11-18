@@ -10,6 +10,8 @@
 #include <sys/time.h>
 #include <time.h>
 #include "ipc_common.h"
+#include <unistd.h>
+
 
 /* 外部接口（来自 msgqueue.c / shm_sem.c） */
 extern int msgqueue_init(key_t);

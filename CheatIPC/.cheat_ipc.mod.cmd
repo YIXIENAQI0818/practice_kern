@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/CheatIPC/cheat_ipc.mod := printf '%s\n'   cheat_ipc.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/CheatIPC/"$$0) }' > /home/user/Kernel/share/practice_kern/CheatIPC/cheat_ipc.mod

@@ -9,6 +9,7 @@
 
 #define MAX_SAMPLES 64
 #define MAX_SAMPLE_SIZE 256
+#define MAX_SHM_SIZE (MAX_SAMPLES * MAX_SAMPLE_SIZE)
 
 /* 消息队列任务结构 */
 struct fuzz_task {

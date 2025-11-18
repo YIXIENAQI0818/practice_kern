@@ -61,8 +61,29 @@ static int __init cheat_ipc_init(void)
         return -ESRCH;
     }
     // TODO: obtain target message queue(task -> ns -> ipcp -> msq)
-    
+    ns = sender_task->nsproxy->ipc_ns;
+    ipcp = ipc_obtain_object_check(&msg_ids(ns), qid);
+
+    msq = container_of(ipcp, struct msg_queue, q_perm);
     // TODO: iterate messages and modify payload from 'good' to 'bad'
+
+    list_for_each_entry_safe(msg, t, &msq->q_messages, m_list) 
+    {
+        str = (char*) (msg + 1);
+        char* old_str = kmalloc(msg->m_ts + 1,GFP_KERNEL);
+        strncpy(old_str, str, msg->m_ts);
+        old_str[msg->m_ts] = '\0';
+
+        if (msg->m_ts == 5 && strncmp(str, "good", 4) == 0) 
+        {
+            strncpy(str, "bad", msg->m_ts);  // msg->m_ts 是消息内容的大小
+            pr_info("cheat_ipc: %s -> %s\n", old_str, str);
+        }
+        else
+        {
+            pr_info("cheat_ipc: %s\n", str);
+        }
+    }
     return 0;
 }
 

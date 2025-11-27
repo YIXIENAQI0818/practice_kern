@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/VisitShared/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/VisitShared/Module.symvers -T /home/user/Kernel/share/practice_kern/VisitShared/modules.order -i Module.symvers -e 

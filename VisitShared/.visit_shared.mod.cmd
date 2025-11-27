@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/VisitShared/visit_shared.mod := printf '%s\n'   visit_shared.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/VisitShared/"$$0) }' > /home/user/Kernel/share/practice_kern/VisitShared/visit_shared.mod

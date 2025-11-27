@@ -6,6 +6,7 @@
 #include <linux/device.h>
 #include <linux/delay.h>
 #include <linux/ioctl.h>
+#include <linux/mutex.h>
 
 #define VS_DEV_NAME "visit_shared"
 #define VS_CLASS_NAME "visit_shared_cls"
@@ -19,23 +20,31 @@ static dev_t vs_devno;
 static struct cdev vs_cdev;
 static struct class *vs_class;
 static int shared_val = 0; // intentionally non-atomic
+static DEFINE_MUTEX(shared_val_lock);
 
 static long vs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
     int tmp;
     switch (cmd) {
     case VS_INC1:
+        mutex_lock(&shared_val_lock);
         tmp = shared_val;
         schedule();
         shared_val = tmp + 1;
+        mutex_unlock(&shared_val_lock);
         return 0;
     case VS_INC2:
+        mutex_lock(&shared_val_lock);
         tmp = shared_val;
         schedule();
         shared_val = tmp + 2;
+        mutex_unlock(&shared_val_lock);
         return 0;
     case VS_GET:
-        if (copy_to_user((int __user *)arg, &shared_val, sizeof(shared_val)))
+        mutex_lock(&shared_val_lock);
+        int tmp = shared_val;
+        mutex_unlock(&shared_val_lock);
+        if (copy_to_user((int __user *)arg, &tmp, sizeof(tmp)))
             return -EFAULT;
         return 0;
     default:
@@ -67,7 +76,7 @@ static int __init vs_init(void)
         goto err_cdev;
     }
     device_create(vs_class, NULL, vs_devno, NULL, VS_DEV_NAME);
-    pr_info("visit_shared: loaded without locking\n");
+    pr_info("visit_shared: loaded with locking\n");
     shared_val = 0;
     return 0;
 err_cdev:
@@ -90,4 +99,4 @@ module_init(vs_init);
 module_exit(vs_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("VisitShared race condition demo (inc1/inc2/get) without synchronization");
+MODULE_DESCRIPTION("VisitShared race condition demo (inc1/inc2/get) with mutex locking");

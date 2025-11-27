@@ -76,7 +76,7 @@ static int __init cheat_ipc_init(void)
 
         if (msg->m_ts == 5 && strncmp(str, "good", 4) == 0) 
         {
-            strncpy(str, "bad", msg->m_ts);  // msg->m_ts 是消息内容的大小
+            strncpy(str, "bad", msg->m_ts);
             pr_info("cheat_ipc: %s -> %s\n", old_str, str);
         }
         else

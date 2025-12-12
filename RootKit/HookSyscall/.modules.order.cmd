@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HookSyscall/modules.order := {   echo /home/user/Kernel/share/practice_kern/RootKit/HookSyscall/hook_syscall.o; :; } > /home/user/Kernel/share/practice_kern/RootKit/HookSyscall/modules.order

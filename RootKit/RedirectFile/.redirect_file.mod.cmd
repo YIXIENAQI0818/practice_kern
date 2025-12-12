@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/RedirectFile/redirect_file.mod := printf '%s\n'   redirect_file.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/RootKit/RedirectFile/"$$0) }' > /home/user/Kernel/share/practice_kern/RootKit/RedirectFile/redirect_file.mod

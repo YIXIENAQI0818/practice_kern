@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/RedirectFile/modules.order := {   echo /home/user/Kernel/share/practice_kern/RootKit/RedirectFile/redirect_file.o; :; } > /home/user/Kernel/share/practice_kern/RootKit/RedirectFile/modules.order

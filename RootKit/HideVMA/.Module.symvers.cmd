@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HideVMA/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/RootKit/HideVMA/Module.symvers -T /home/user/Kernel/share/practice_kern/RootKit/HideVMA/modules.order -i Module.symvers -e 

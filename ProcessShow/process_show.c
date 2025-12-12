@@ -34,16 +34,16 @@ static void print_processes(void) {
                get_task_state(task->__state),
                task->comm);
         // TODO: print more info
-        pid_t ppid = task->real_parent->pid;
-        printk(KERN_INFO "    PPID: %-6d\n", ppid);
+        // pid_t ppid = task->real_parent->pid;
+        // printk(KERN_INFO "    PPID: %-6d\n", ppid);
 
-        const struct cred *cred = rcu_dereference(task->cred);
-        uid_t euid = from_kuid(&init_user_ns, cred->euid);
-        gid_t egid = from_kgid(&init_user_ns, cred->egid);
-        printk(KERN_INFO "    EUID: %u | EGID: %u\n", euid, egid);
+        // const struct cred *cred = rcu_dereference(task->cred);
+        // uid_t euid = from_kuid(&init_user_ns, cred->euid);
+        // gid_t egid = from_kgid(&init_user_ns, cred->egid);
+        // printk(KERN_INFO "    EUID: %u | EGID: %u\n", euid, egid);
 
-        struct thread_info *ti = task_thread_info(task);
-        printk(KERN_INFO "    CPU: %d\n", ti->cpu);
+        // struct thread_info *ti = task_thread_info(task);
+        // printk(KERN_INFO "    CPU: %d\n", ti->cpu);
         
 
     }

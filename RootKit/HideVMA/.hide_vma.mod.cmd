@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HideVMA/hide_vma.mod := printf '%s\n'   hide_vma.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/RootKit/HideVMA/"$$0) }' > /home/user/Kernel/share/practice_kern/RootKit/HideVMA/hide_vma.mod

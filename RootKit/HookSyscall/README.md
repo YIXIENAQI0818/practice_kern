@@ -61,7 +61,7 @@ kernel login: user
 * 拷贝实验目录到客户机本地。
 
 ```bash
-cp -r /tmp/share/practice_kern/HookSyscall .
+cp -r /tmp/share/practice_kern/RootKit/HookSyscall .
 cd HookSyscall
 ```
 

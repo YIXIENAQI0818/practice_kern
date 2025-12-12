@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HideProcess/hide_process.mod := printf '%s\n'   hide_process.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/RootKit/HideProcess/"$$0) }' > /home/user/Kernel/share/practice_kern/RootKit/HideProcess/hide_process.mod

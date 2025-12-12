@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HookSyscall/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/RootKit/HookSyscall/Module.symvers -T /home/user/Kernel/share/practice_kern/RootKit/HookSyscall/modules.order -i Module.symvers -e 

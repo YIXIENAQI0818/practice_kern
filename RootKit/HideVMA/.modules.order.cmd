@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HideVMA/modules.order := {   echo /home/user/Kernel/share/practice_kern/RootKit/HideVMA/hide_vma.o; :; } > /home/user/Kernel/share/practice_kern/RootKit/HideVMA/modules.order

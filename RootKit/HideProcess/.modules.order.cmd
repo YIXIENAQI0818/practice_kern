@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/HideProcess/modules.order := {   echo /home/user/Kernel/share/practice_kern/RootKit/HideProcess/hide_process.o; :; } > /home/user/Kernel/share/practice_kern/RootKit/HideProcess/modules.order

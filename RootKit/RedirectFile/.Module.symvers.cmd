@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/RedirectFile/Module.symvers :=  scripts/mod/modpost -M        -o /home/user/Kernel/share/practice_kern/RootKit/RedirectFile/Module.symvers -T /home/user/Kernel/share/practice_kern/RootKit/RedirectFile/modules.order -i Module.symvers -e 

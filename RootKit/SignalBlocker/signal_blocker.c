@@ -24,7 +24,8 @@ static int __init signal_blocker_init(void)
 
     // 遍历所有进程
     for_each_process(task) {
-        if (/* TODO: 判断 task 是否是 TARGET_PROC_NAME */) {
+        if (strcmp(task->comm, TARGET_PROC_NAME) == 0)
+        {
 
             pr_info("signal_blocker_task: 找到目标进程, PID=%d\n", task->pid);
 
@@ -32,9 +33,13 @@ static int __init signal_blocker_init(void)
             task_lock(task);
 
             // TODO: 保存原来的 handler 到 old_action
+            old_action = task->sighand->action[BLOCKED_SIG - 1];
 
             // TODO: 设置 task 的 BLOCKED_SIG 信号处理为忽略(SIG_IGN)
             // 注意要清空 sa_mask 并设置 sa_flags = 0
+            task->sighand->action[BLOCKED_SIG - 1].sa.sa_handler = SIG_IGN;
+            sigemptyset(&task->sighand->action[BLOCKED_SIG - 1].sa.sa_mask);
+            task->sighand->action[BLOCKED_SIG - 1].sa.sa_flags = 0;
 
             task_unlock(task);
             rcu_read_unlock();
@@ -51,12 +56,14 @@ static void __exit signal_blocker_exit(void)
     pr_info("signal_blocker_task: 模块卸载\n");
 
     for_each_process(task) {
-        if (/* TODO: 判断 task 是否是 TARGET_PROC_NAME */) {
+        if (strcmp(task->comm, TARGET_PROC_NAME) == 0)
+        {
 
             rcu_read_lock();
             task_lock(task);
 
             // TODO: 恢复 task 的 BLOCKED_SIG 信号处理为 old_action
+            task->sighand->action[BLOCKED_SIG - 1] = old_action;
 
             task_unlock(task);
             rcu_read_unlock();

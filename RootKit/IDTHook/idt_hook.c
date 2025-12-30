@@ -22,7 +22,8 @@ static irqreturn_t keylog_irq_handler(int irq, void *dev)
     unsigned char scancode;
 
     // TODO: 从键盘控制器端口读取扫描码
-
+    scancode = inb(0x60);
+    printk(KERN_INFO "keylog: scancode = 0x%02x\n", scancode);
     /* 不阻止其他共享此 IRQ 的处理器 */
     return IRQ_NONE;
 }

@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/IDTHook/modules.order := {   echo /home/user/Kernel/share/practice_kern/RootKit/IDTHook/idt_hook.o; :; } > /home/user/Kernel/share/practice_kern/RootKit/IDTHook/modules.order

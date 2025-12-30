@@ -1,0 +1,1 @@
+savedcmd_/home/user/Kernel/share/practice_kern/RootKit/IDTHook/idt_hook.mod := printf '%s\n'   idt_hook.o | awk '!x[$$0]++ { print("/home/user/Kernel/share/practice_kern/RootKit/IDTHook/"$$0) }' > /home/user/Kernel/share/practice_kern/RootKit/IDTHook/idt_hook.mod
